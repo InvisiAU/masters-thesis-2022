@@ -60,6 +60,18 @@ summary(BTv2)
 hist(BTv2$coefficients)
 anova(BTv2, test = "Chisq")
 
+# Function written by Heather Turner, see https://stackoverflow.com/questions/69892656/bradleyterry2-package-in-r-using-null-hypothesis-as-reference-player
+goodness_of_fit<-function(BTModel) {
+  cf <- coef(BTModel)[!is.na(coef(BTModel))]
+  V <- vcov(BTModel)
+  ind <- grep("(Characters)|(Matchup)", names(cf))
+  chisq <- c(t(cf[ind]) %*% chol2inv(chol(V[ind, ind])) %*% cf[ind])
+  df <- length(ind)
+  c(chisq = chisq, df = df)  
+}
+
+goodness_of_fit(BTv1)
+goodness_of_fit(BTv2)
 
 #Now create output graphs
 library(tidyverse)
